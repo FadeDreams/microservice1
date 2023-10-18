@@ -19,7 +19,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + \
     os.path.join(basedir, os.getenv('DBNAME', 'users.db'))
 
-app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'secret')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'secret')
 
 db.init_app(app)
 ma = Marshmallow(app)
@@ -86,7 +86,7 @@ def login():
         return jsonify(message="Bad email or password"), 401
 
 
-@app.route('/check_auth', methods=['GET'])
+@app.route('/ceeck_auth', methods=['GET'])
 @jwt_required
 def check_authentication():
     # If the request reaches this point, it means the provided access token is valid.

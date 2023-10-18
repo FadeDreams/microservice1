@@ -58,7 +58,9 @@ def register():
     user = User(email=email, password=password)
     db.session.add(user)
     db.session.commit()
-    return jsonify(message="User created successfully."), 201
+    access_token = create_access_token(identity=email)
+    return jsonify({'user': user.serialize(), 'access_token': access_token}), 201
+    # return jsonify(message="User created successfully."), 201
 
 
 @app.route('/login', methods=['POST'])
@@ -75,14 +77,16 @@ def login():
         return jsonify(message='Email and password are required'), 400
 
     test = User.query.filter_by(email=email, password=password).first()
+
+    # return jsonify({'result': user.serialize()}), 200
     if test:
         access_token = create_access_token(identity=email)
-        return jsonify(message="Login succeeded!", access_token=access_token)
+        return jsonify({'user': test.serialize(), 'access_token': access_token}), 200
     else:
         return jsonify(message="Bad email or password"), 401
 
 
-@app.route('/check_authentication', methods=['GET'])
+@app.route('/check_auth', methods=['GET'])
 @jwt_required
 def check_authentication():
     # If the request reaches this point, it means the provided access token is valid.

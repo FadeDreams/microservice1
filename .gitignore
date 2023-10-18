@@ -1,0 +1,57 @@
+*.vim
+venv/
+
+# Combined .gitignore
+
+# Node.js-specific
+node_modules/
+
+# Python-specific
+__pycache__/
+*.pyc
+*.pyo
+venv/
+env/
+*.pyc
+
+# IDE-specific
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+
+# Optional: Logs and other generated files
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pids/
+coverage/
+lib-cov/
+
+# Optional: Grunt intermediate storage
+.grunt
+
+# Optional: Compiled binary addons
+build/Release
+
+# Flask-specific
+__pycache__/
+*.pyc
+
+# FastAPI-specific
+
+# Golang-specific
+*.log
+*.out
+*.test
+
+# React-specific
+node_modules/
+build/
+
+

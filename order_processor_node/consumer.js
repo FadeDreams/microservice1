@@ -3,6 +3,10 @@ const axios = require('axios');
 const dotenv = require('dotenv');
 dotenv.config();
 
+//import { EventEmitter } from 'events';
+const EventEmitter = require('events');
+const eventEmitter = new EventEmitter();
+
 const order_api_url = process.env.ORDER_API_URL || 'http://localhost:5002';
 const queueName = 'queue1';
 const rabbitMQHost = 'amqp://localhost'; // Update with your RabbitMQ server's URL
@@ -35,8 +39,8 @@ async function consumeMessages() {
 
           console.log('PUT request successfully sent.');
           console.log('Response:', response.data); // Log the response data
-
-          return 1;
+          eventEmitter.emit('putSuccess', response);
+          //return 1;
 
           // Add your response handling logic here, e.g., store response data or perform additional actions.
         } catch (error) {
@@ -47,6 +51,7 @@ async function consumeMessages() {
       }
     });
   } catch (error) {
+    eventEmitter.emit('putError', error);
     console.error(error);
   }
 }

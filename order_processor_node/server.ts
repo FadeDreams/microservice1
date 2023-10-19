@@ -7,9 +7,10 @@ import { Server } from "socket.io";
 import authRouter from './routes/authRouter';
 import consumeMessages from './consumer';
 import * as socketUtils from "./services/socketUtils.cjs";
+import { EventEmitter } from 'events';
 
 //import emitterRouter from './emmiter';
-
+const eventEmitter = new EventEmitter();
 dotenv.config();
 //dotenv.config({
 //path: "./config.env",
@@ -63,11 +64,21 @@ server.listen(port, () => {
 (async () => {
   const result = await consumeMessages();
 
-  if (result === 1) {
+  eventEmitter.on('putSuccess', () => {
     console.log('The PUT request was successful.');
     // Print something or perform actions here when the PUT request is successful.
-  }
+  });
 })();
+
+
+//(async () => {
+//const result = await consumeMessages();
+
+//if (result === 1) {
+//console.log('The PUT request was successful.');
+//// Print something or perform actions here when the PUT request is successful.
+//}
+//})();
 
 //const serverUrl = `http://${host}:${port}`;
 //const path = '/e';

@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const port = process.env.PORT || 5003;
-const target = process.env.AUTH_API_URL || 'localhost:5001/check_auth';
+const target = process.env.AUTH_API_URL || 'http://localhost:5001/check_auth';
 
 export async function AuthChecker(accessToken: string) {
   console.log("AuthChecker", accessToken)

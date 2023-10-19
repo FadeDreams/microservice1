@@ -8,6 +8,7 @@ import { io } from "socket.io-client";
 
 const orderUrl = process.env.REACT_APP_ORDER_URL;
 const nodejsUrl = process.env.REACT_APP_NODEJS_URL;
+const nodejsBareUrl = process.env.REACT_APP_NODEJS_BARE_URL;
 const goUrl = process.env.REACT_APP_GO_URL;
 
 const allOrderUrl = `${orderUrl}/all`;
@@ -22,7 +23,7 @@ function Dashboard() {
 
   axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`;
   useEffect(() => {
-    socket.current = io(`ws://${nodejsUrl}`);
+    socket.current = io(`ws://${nodejsBareUrl}`);
     socket.current.on("connection", () => {
       console.log("Connected to server");
     });

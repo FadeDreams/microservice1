@@ -1,10 +1,14 @@
 const amqp = require('amqplib');
-const axios = require('axios'); // Import the Axios library
+const axios = require('axios');
+const dotenv = require('dotenv');
+dotenv.config();
 
+const order_api_url = process.env.ORDER_API_URL || 'http://localhost:5002';
 const queueName = 'queue1';
 const rabbitMQHost = 'amqp://localhost'; // Update with your RabbitMQ server's URL
 
 async function consumeMessages() {
+  console.log('consumeMessages');
   try {
     const connection = await amqp.connect(rabbitMQHost);
     const channel = await connection.createChannel();
@@ -19,17 +23,20 @@ async function consumeMessages() {
 
         console.log(`[x] Received`, messageObject);
 
-        // Set is_open to false in a JSON object
-        const updatedMessage = { is_open: false };
+        // Update the message to set is_open to false
+        messageObject.is_open = false;
 
-        // Add your processing logic here for the received message.
         // Make a PUT request using Axios with the updated JSON object
         try {
-          const putUrl = 'http://localhost:5002/order/1'; // Replace with your URL
-          const response = await axios.put(putUrl, updatedMessage);
+          const putUrl = `${order_api_url}/${messageObject.id}`;
+          console.log(putUrl);
+          console.log(messageObject);
+          const response = await axios.put(putUrl, messageObject);
 
           console.log('PUT request successfully sent.');
           console.log('Response:', response.data); // Log the response data
+
+          return 1;
 
           // Add your response handling logic here, e.g., store response data or perform additional actions.
         } catch (error) {
@@ -45,5 +52,4 @@ async function consumeMessages() {
 }
 
 module.exports = consumeMessages;
-//consumeMessages().catch(console.error);
 

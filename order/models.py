@@ -19,6 +19,14 @@ class Coffee(db.Model):
         self.quantity = quantity
         self.is_open = is_open
 
+    def serialize(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'quantity': self.quantity,
+            'is_open': self.is_open
+        }
+
 
 # class Order(db.Model):
     # __tablename__ = 'order'

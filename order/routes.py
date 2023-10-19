@@ -132,7 +132,7 @@ def get_coffee_by_id(id):
 def update_coffee(id):
     data = request.get_json()
 
-    if 'name' not in data or 'quantity' not in data or 'is_open' not in data:
+    if 'is_open' not in data:
         return jsonify({'message': 'Name, quantity, and is_open are required in the request data'}), 400
 
     coffee = Coffee.query.get(id)
@@ -140,10 +140,16 @@ def update_coffee(id):
     if coffee is None:
         return jsonify({'message': 'Coffee not found'}), 404
 
-    coffee.name = data['name']
-    coffee.quantity = data['quantity']
     coffee.is_open = data['is_open']
 
     db.session.commit()
 
+    return jsonify({'message': 'Coffee updated successfully'}), 200
+
+
+@order_blueprint.route('/r', methods=['GET'])
+def rcoffee():
+    coffee = Coffee.query.get(1)
+    message_body = json.dumps(coffee.serialize())
+    send_message(message_body, 'queue1', 'queue1')
     return jsonify({'message': 'Coffee updated successfully'}), 200

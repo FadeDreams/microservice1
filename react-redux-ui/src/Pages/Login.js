@@ -5,10 +5,25 @@ import { useDispatch } from 'react-redux';
 import { loginUser } from '../Store/userSlice';
 import { useSelector } from 'react-redux';
 
-const nodejsUrl = process.env.REACT_APP_NODEJS_URL;
+import { useRef } from "react";
+import { io } from "socket.io-client";
 
 function Login() {
+  const socket = useRef();
 
+  useEffect(() => {
+    socket.current = io("ws://localhost:5003");
+
+    socket.current.on("connection", () => {
+      console.log("Connected to server");
+    });
+
+    // Add a listener for the "message" event
+    socket.current.on("message", (message) => {
+      console.log("Received message from server:", message);
+    });
+  }, []);
+  //socket.current.emit("message", new Date().getTime());
 
   const { loading, user, error } = useSelector((state) => state.user);
   const [email, setEmail] = useState('');

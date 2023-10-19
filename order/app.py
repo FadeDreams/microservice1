@@ -35,4 +35,4 @@ with app.app_context():
 
 # scheduler.start()
 if __name__ == "__main__":
-    app.run(debug=True, port=os.getenv('APPPORT', 5002))
+    app.run(debug=True, port=os.getenv('PORT', 5002))

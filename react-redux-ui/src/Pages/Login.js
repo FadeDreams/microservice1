@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { loginUser } from '../Store/userSlice';
 import { useSelector } from 'react-redux';
 
+const nodejsUrl = process.env.REACT_APP_NODEJS_URL;
 
 function Login() {
+
 
   const { loading, user, error } = useSelector((state) => state.user);
   const [email, setEmail] = useState('');

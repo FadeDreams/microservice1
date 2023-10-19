@@ -12,15 +12,12 @@ const nodejsBareUrl = process.env.REACT_APP_NODEJS_BARE_URL;
 const goUrl = process.env.REACT_APP_GO_URL;
 
 const allOrderUrl = `${orderUrl}/all`;
-const nodejsUpdateOrderUrl = `${nodejsUrl}/all`;
-const goUpdateOrderUrl = `${goUrl}/all`;
-
 
 function Dashboard() {
   const socket = useRef();
   const user = useSelector((state) => state.user.user);
   const [orders, setOrders] = useState([]);
-
+  const [receivedMessages, setReceivedMessages] = useState([]);
   axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`;
   useEffect(() => {
     socket.current = io(`ws://${nodejsBareUrl}`);
@@ -30,6 +27,7 @@ function Dashboard() {
     // Add a listener for the "message" event
     socket.current.on("message", (message) => {
       console.log("Received message from server:", message);
+      setReceivedMessages((prevMessages) => [...prevMessages, message]);
     });
 
     // Make a GET request to fetch orders when the component mounts
@@ -53,28 +51,6 @@ function Dashboard() {
         console.error('Error fetching orders:', error);
       });
   }, []);
-  const nodeHandleUpdateOrder = (orderId) => {
-    // Send a POST request to update the order
-    axios.post(`${nodejsUpdateOrderUrl}/${orderId}`)
-      .then(() => {
-        // Update the UI or perform any other actions after the order is updated
-        // You can fetch the updated orders again if needed
-      })
-      .catch((error) => {
-        console.error('Error updating order:', error);
-      });
-  };
-  const goHandleUpdateOrder = (orderId) => {
-    // Send a POST request to update the order
-    axios.post(`${goUpdateOrderUrl}/${orderId}`)
-      .then(() => {
-        // Update the UI or perform any other actions after the order is updated
-        // You can fetch the updated orders again if needed
-      })
-      .catch((error) => {
-        console.error('Error updating order:', error);
-      });
-  };
 
 
   return (
@@ -88,19 +64,17 @@ function Dashboard() {
             Order Name: {order.name}<br />
             Quantity: {order.quantity}<br />
             Order Status: {order.is_open ? 'Open' : 'Closed'}
-            {order.is_open && (
-              <div>
-                <button onClick={() => nodeHandleUpdateOrder(order.id)}>
-                  Update Order (Node.js Microservice)
-                </button>
-                <button onClick={() => goHandleUpdateOrder(order.id)}>
-                  Update Order (Go Microservice)
-                </button>
-              </div>
-            )}
           </li>
         ))}
       </ul>
+      <div>
+        <h3>Received Messages:</h3>
+        <div>
+          {receivedMessages.map((message, index) => (
+            <div key={index}>{message}</div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

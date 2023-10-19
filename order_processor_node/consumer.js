@@ -1,11 +1,7 @@
-const amqp = require('amqplib');
-const axios = require('axios');
+const amqp = require('amqplib'); const axios = require('axios');
 const dotenv = require('dotenv');
 dotenv.config();
 
-//import { EventEmitter } from 'events';
-const EventEmitter = require('events');
-const eventEmitter = new EventEmitter();
 
 const order_api_url = process.env.ORDER_API_URL || 'http://localhost:5002';
 const queueName = 'queue1';
@@ -20,39 +16,38 @@ async function consumeMessages() {
 
     console.log(`[*] Waiting for messages in ${queueName}. To exit, press Ctrl-C`);
 
-    channel.consume(queueName, async (msg) => {
-      if (msg !== null) {
-        const message = msg.content.toString();
-        const messageObject = JSON.parse(message);
+    return new Promise((resolve, reject) => {
+      channel.consume(queueName, async (msg) => {
+        if (msg !== null) {
+          const message = msg.content.toString();
+          const messageObject = JSON.parse(message);
 
-        console.log(`[x] Received`, messageObject);
+          console.log(`[x] Received`, messageObject);
 
-        // Update the message to set is_open to false
-        messageObject.is_open = false;
+          // Update the message to set is_open to false
+          messageObject.is_open = false;
 
-        // Make a PUT request using Axios with the updated JSON object
-        try {
-          const putUrl = `${order_api_url}/${messageObject.id}`;
-          console.log(putUrl);
-          console.log(messageObject);
-          const response = await axios.put(putUrl, messageObject);
-
-          console.log('PUT request successfully sent.');
-          console.log('Response:', response.data); // Log the response data
-          eventEmitter.emit('putSuccess', response);
-          //return 1;
-
-          // Add your response handling logic here, e.g., store response data or perform additional actions.
-        } catch (error) {
-          console.error('Error sending PUT request:', error);
+          // Make a PUT request using Axios with the updated JSON object
+          try {
+            const putUrl = `${order_api_url}/${messageObject.id}`;
+            console.log(putUrl);
+            console.log(messageObject);
+            const response = await axios.put(putUrl, messageObject);
+            console.log('Response:', response.data);
+            resolve(1);
+          } catch (error) {
+            console.error('Error sending PUT request:', error);
+            // You can reject the promise with an error status
+            reject(error);
+          }
+          channel.ack(msg); // Acknowledge the message to remove it from the queue.
         }
-
-        channel.ack(msg); // Acknowledge the message to remove it from the queue.
-      }
+      });
     });
   } catch (error) {
-    eventEmitter.emit('putError', error);
     console.error(error);
+    // You can reject the promise with an error status in case of an error here.
+    reject(error);
   }
 }
 

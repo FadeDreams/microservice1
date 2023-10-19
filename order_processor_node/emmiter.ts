@@ -11,7 +11,7 @@ emitterRouter.get('/e', async (req: Request, res: Response, next) => {
 
   try {
     consumeMessages();
-    req.io.emit("message", `Hello, `);
+    req.io.emit("message", `order status set successfully in node.js microservice`);
     next();
 
     //res.send('consumeMessages called successfully');

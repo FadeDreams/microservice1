@@ -46,8 +46,8 @@ app.get('/e', async (req: Request, res: Response, next) => {
 
   console.log(`in ee`);
   try {
-    req.io.emit("message", `Hello, `);
-    await consumeMessages();
+    req.io.emit("message", `order status set successfully from node.js microservice`);
+    //await consumeMessages();
     //res.send('consumeMessages called successfully');
   } catch (error) {
     console.error('Error calling consumeMessages:', error);
@@ -63,48 +63,30 @@ server.listen(port, () => {
 });
 
 
-
 (async () => {
-  console.log('1The PUT request was successful.');
   const result = await consumeMessages();
-  console.log('2The PUT request was successful.');
   if (result === 1) {
-    console.log('3The PUT request was successful.');
-    // Print something or perform actions here when the PUT request is successful.
+    const path = '/e';
+    const serverurl = `http://${host}:${port}`;
+    fetch(`${serverurl}${path}`, {
+      method: 'get',
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`request failed with status: ${response.status}`);
+        }
+        return response.text();
+      })
+      .then((data) => {
+        console.log(`response from /emitter: ${data}`);
+      })
+      .catch((error) => {
+        console.error(`error making request to /emitter: ${error.message}`);
+      });
   }
 })();
 
 
 
-
 //consumeMessages();
 //export { app, socketIOMiddleware }
-
-
-//const path = '/e';
-//const serverurl = `http://${host}:${port}`;
-//fetch(`${serverurl}${path}`, {
-//method: 'get',
-//})
-//.then((response) => {
-//if (!response.ok) {
-//throw new Error(`request failed with status: ${response.status}`);
-//}
-//return response.text();
-//})
-//.then((data) => {
-//console.log(`response from /emitter: ${data}`);
-//})
-//.catch((error) => {
-//console.error(`error making request to /emitter: ${error.message}`);
-//});
-//
-//(async () => {
-//const result = await consumeMessages();
-//eventEmitter.on('putSuccess', () => {
-//console.log('The PUT request was successful.');
-//console.log('2The PUT request was successful.');
-//// Print something or perform actions here when the PUT request is successful.
-//});
-//})();
-

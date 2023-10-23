@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String
 import os
 
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity, create_refresh_token, jwt_refresh_token_required
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
 
@@ -78,15 +78,17 @@ def login():
 
     test = User.query.filter_by(email=email, password=password).first()
 
-    # return jsonify({'result': user.serialize()}), 200
     if test:
+        # Create both access and refresh tokens
         access_token = create_access_token(identity=email)
-        return jsonify({'user': test.serialize(), 'access_token': access_token}), 200
+        refresh_token = create_refresh_token(identity=email)
+
+        return jsonify({'user': test.serialize(), 'access_token': access_token, 'refresh_token': refresh_token}), 200
     else:
         return jsonify(message="Bad email or password"), 401
 
 
-@app.route('/ceeck_auth', methods=['GET'])
+@app.route('/check_auth', methods=['GET'])
 @jwt_required
 def check_authentication():
     # If the request reaches this point, it means the provided access token is valid.
@@ -102,6 +104,22 @@ def check_authentication():
         return jsonify({'result': user.serialize()}), 200
     else:
         return jsonify({'message': 'User is not authenticated'}), 401
+
+# @app.route('/protected', methods=['GET'])
+# @jwt_required
+# def protected():
+    # username = get_jwt_identity()
+    # return jsonify(logged_in_as=username), 200
+
+
+@app.route('/refresh', methods=['POST'])
+@jwt_refresh_token_required
+def refresh():
+    current_user = get_jwt_identity()
+    ret = {
+        'access_token': create_access_token(identity=current_user)
+    }
+    return jsonify(ret), 200
 
 
 if __name__ == '__main__':

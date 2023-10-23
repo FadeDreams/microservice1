@@ -56,6 +56,7 @@ function Dashboard() {
   return (
     <div>
       <h2>Welcome to the Dashboard, {user ? user.email : 'User'}!</h2>
+      <h3>  <Link to="/createorder">Create New Order</Link></h3>
       <h3>Your Orders:</h3>
       <ul>
         {orders.map((order) => (

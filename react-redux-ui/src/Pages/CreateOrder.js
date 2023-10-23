@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
+import { handleTokenRefreshError } from './authUtil';
+
 const orderUrl = process.env.REACT_APP_ORDER_URL;
 const allOrderUrl = `${orderUrl}/add-coffee`;
 
@@ -21,6 +23,8 @@ function CreateOrder() {
     };
 
     // Send a POST request to create an order
+    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`;
+
     axios.post(allOrderUrl, data)
       .then((response) => {
         // Handle the success case
@@ -32,6 +36,8 @@ function CreateOrder() {
       .catch((error) => {
         // Handle any errors that occur during the request
         setMessage('Error creating the order');
+        //handle 401 unauth error by refresh token
+        handleTokenRefreshError(error);
       });
   };
 

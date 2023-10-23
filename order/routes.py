@@ -29,7 +29,6 @@ def get_user(api_key):
     headers = {
         'Authorization': f'{api_key}'
     }
-
     response = requests.get(
         os.getenv('AUTH_API_URL', 'http://localhost:5001/check_auth'), headers=headers)
     # response = requests.get(AUTH_API_URL, headers=headers)
@@ -44,25 +43,13 @@ def get_user(api_key):
     return user
 
 
-@order_blueprint.route('/', methods=['GET'])
-def get_open_order():
-    api_key = request.headers.get('Authorization')
-    # print(api_key)
-    if not api_key:
-        return jsonify({'message': 'Not logged in 1'}), 401
-    response = get_user(api_key)
-    print(response)
-    user = response.get('result')
-    if not user:
-        return jsonify({'message': 'Not logged in 2'}), 401
-
-    open_order = Order.query.filter_by(user_id=user['id'], is_open=1).first()
-    if open_order:
-        return jsonify({
-            'result': open_order.serialize()
-        }), 200
-    else:
-        return jsonify({'message': 'No open orders'})
+# @order_blueprint.route('/', methods=['GET'])
+# def get_open_order():
+    # api_key = request.headers.get('Authorization')
+    # # print(api_key)
+    # if not api_key:
+    # return jsonify({'message': 'Not logged in 1'}), 401
+    # response = get_user(api_key)
 
 
 @order_blueprint.route('/all', methods=['GET'])
@@ -91,6 +78,12 @@ def all_coffees():
 
 @order_blueprint.route('/add-coffee', methods=['POST'])
 def add_coffee():
+    api_key = request.headers.get('Authorization')
+    # print(api_key)
+    if not api_key:
+        return jsonify({'message': 'Not logged in 1'}), 401
+    response = get_user(api_key)
+
     data = request.get_json()
     if not data:
         return jsonify({'message': 'Invalid data format'}), 400

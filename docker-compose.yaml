@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  auth:
+    build: ./auth
+    ports:
+      - "5001:5001"
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_RUN_HOST=0.0.0.0
+      - FLASK_RUN_PORT=5001
+
+  order:
+    build: ./order
+    ports:
+      - "5002:5002"
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_RUN_HOST=0.0.0.0
+      - FLASK_RUN_PORT=5002
+
+  order_processor_fastapi:
+    build: ./order_processor_fastapi
+    ports:
+      - "5005:5005"
+
+  order_processor_go:
+    build: ./order_processor_go
+    ports:
+      - "5006:5006"
+
+  order_processor_node:
+    build: ./order_processor_node
+    ports:
+      - "5003:5003"
+
+  react-redux-ui:
+    build: ./react-redux-ui
+    ports:
+      - "3000:80"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+networks:
+  default:
+    name: microservices-network

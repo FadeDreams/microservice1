@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-processor-go-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-processor-go
+  template:
+    metadata:
+      labels:
+        app: order-processor-go
+    spec:
+      containers:
+      - name: order-processor-go
+        image: order-processor-go:latest
+        ports:
+        - containerPort: 5006
+
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-processor-go-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: order-processor-go
+  ports:
+    - protocol: TCP
+      port: 5006
+      targetPort: 5006

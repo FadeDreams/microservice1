@@ -27,16 +27,17 @@ Manages the placement of orders into the relevant microservices and utilizes Soc
 
 ## Project Structure
 ```plaintext
-/project_directory
-|-- auth
-|-- docker-compose.yml
-|-- order
-|-- order_processor_fastapi
-|-- order_processor_node
-|-- order_processor_go
-|-- venv
-|-- order_processor_p1
-|-- venv-user
+.
+├── auth
+├── docker-compose.yaml
+├── kubernetes
+├── order
+├── order_processor_fastapi
+├── order_processor_go
+├── order_processor_node
+├── react-redux-ui
+└── README.md
+
 ```
 
 ## Getting Started
